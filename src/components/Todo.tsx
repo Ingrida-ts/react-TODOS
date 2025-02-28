@@ -22,6 +22,12 @@ const P = styled.p`
   font-size: 17px;
 `;
 
+const P1 = styled.p`
+  text-decoration: line-through;
+  font-weight: 500;
+  font-size: 17px;
+`;
+
 interface ITaskProps {
   id: string;
   title: string;
@@ -45,10 +51,16 @@ export default function Todo({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      editTask(id, newTitle);
-      setEdit(false);
+      if (completed && newTitle != title) {
+        editTask(id, newTitle);
+        setEdit(false);
+        toggleTaskCompleted(id);
+      } else {
+        editTask(id, newTitle);
+        setEdit(false);
+      }
     },
-    [editTask, id, newTitle]
+    [editTask, id, newTitle, completed, title, toggleTaskCompleted]
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +80,7 @@ export default function Todo({
           defaultChecked={completed}
           onChange={() => toggleTaskCompleted(id)}
         />
-        <P>{title}</P>
+        {completed ? <P1>{title}</P1> : <P>{title}</P>}
       </div>
 
       <Button onClick={() => setEdit(true)}>Редактировать</Button>
